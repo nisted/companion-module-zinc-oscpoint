@@ -1,9 +1,10 @@
 const filePresets = require('./presets/files.js')
 const mediaPresets = require('./presets/media.js')
 const slidesPresets = require('./presets/slides.js')
+const syncPresets = require('./presets/sync.js')
 
 module.exports = function (self) {
-	let presets = { ...filePresets, ...mediaPresets, ...slidesPresets }
+	let presets = { ...filePresets, ...mediaPresets, ...slidesPresets, ...syncPresets }
 	//let presets = { ...filePresets, ...mediaPresets }
 	const structure = [{
 		id: 'slides_section',
@@ -30,6 +31,20 @@ module.exports = function (self) {
 				name: 'Slide show feedback',
 				// description: 'Live slide show status reporting',
 				presets: ['showState', 'presentationName', 'slideNumbers', 'buildNumbers', 'notes'],
+			},
+		],
+	},
+	{
+		id: 'sync_section',
+		name: 'Main / backup sync',
+		definitions: [
+			{
+				id: 'sync_group',
+				type: 'simple',
+				name: 'Follow another connection',
+				description:
+					'Use on the BACKUP connection. "Main" = label of the connection to follow - edit to match yours. For automatic follow, add a trigger: event "On variable change" for $(Main:currentSlide), $(Main:buildPosition) and $(Main:state), action "Sync: follow another connection".',
+				presets: ['syncNow', 'syncStatus', 'openMatching', 'openAndSync'],
 			},
 		],
 	},

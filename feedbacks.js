@@ -3,6 +3,25 @@ const { graphics } = require('companion-module-utils')
 
 module.exports = async function (self) {
 	self.setFeedbackDefinitions({
+		syncMismatch: {
+			name: 'Sync: out of step with source connection',
+			type: 'boolean',
+			label: 'Out of sync',
+			description: 'True when this PowerPoint is not on the same slide/build as the source. Replace "Main" with the source connection label.',
+			defaultStyle: {
+				bgcolor: combineRgb(200, 0, 0),
+				color: combineRgb(255, 255, 255),
+			},
+			options: [
+				{ id: 'sourceSlide', type: 'textinput', label: 'Source slide', default: '$(Main:currentSlide)', useVariables: true },
+				{ id: 'sourceBuild', type: 'textinput', label: 'Source build position', default: '$(Main:buildPosition)', useVariables: true },
+			],
+			callback: (feedback) => {
+				const s = String(feedback.options.sourceSlide ?? '')
+				const b = String(feedback.options.sourceBuild ?? '')
+				return s !== String(self.getVariableValue('currentSlide')) || b !== String(self.getVariableValue('buildPosition'))
+			},
+		},
 		showState: {
 			name: 'Show state feedback',
 			type: 'boolean',

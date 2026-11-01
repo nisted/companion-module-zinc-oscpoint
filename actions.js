@@ -1,7 +1,10 @@
 // const { Regex } = require('@companion-module/base')
 
+const syncActions = require('./actions-sync')
+
 module.exports = function (self) {
 	self.setActionDefinitions({
+		...syncActions(self, (path, args) => sendOscMessage(path, args)),
 		next: {
 			name: 'Next',
 			options: [],

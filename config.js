@@ -48,6 +48,22 @@ const configFields = [
 		width: 12,
 	},
 	{
+		type: 'number',
+		id: 'heartbeatTimeout',
+		label: 'Connection timeout (seconds, 0 = off)',
+		width: 6,
+		min: 0,
+		max: 120,
+		default: 10,
+	},
+	{
+		id: 'heartbeat-line',
+		type: 'static-text',
+		label: 'Connection check',
+		value: `Status only shows OK once OSCPoint actually replies. If nothing is heard for this long, the connection shows as failed. Requires OSC feedbacks to be enabled in OSCPoint.<br/><br/>`,
+		width: 12,
+	},
+	{
 		id: 'important-line',
 		type: 'static-text',
 		label: 'Setting up multiple PowerPoint machines?',

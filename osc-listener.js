@@ -2,9 +2,59 @@ const osc = require('osc')
 const { InstanceStatus } = require('@companion-module/base')
 const textHelper = require('./text-helper')
 
+// Connection health:
+// UDP has no handshake, so binding the local port says nothing about whether OSCPoint is there.
+// Status only goes OK once a real /oscpoint/ message arrives. If the line goes quiet, we send
+// /oscpoint/feedbacks/refresh as a probe; no reply within the timeout => ConnectionFailure.
+const PROBE_AFTER_SILENCE_MS = 5000
+
 const oscListener = {
+	lastSeen: 0,
+	online: false,
+	heartbeatTimer: null,
 	close: async function () {
+		this.stopHeartbeat()
 		await this.udpPort.close()
+	},
+	markSeen: function (self) {
+		this.lastSeen = Date.now()
+		if (!this.online) {
+			this.online = true
+			self.log('info', 'OSCPoint is responding')
+			self.updateStatus(InstanceStatus.Ok, 'Connected.')
+		}
+	},
+	startHeartbeat: function (self) {
+		this.stopHeartbeat()
+		// existing connections won't have this field yet -> default 10s
+		const timeoutS = parseInt(self.config.heartbeatTimeout ?? 10)
+		if (isNaN(timeoutS) || timeoutS <= 0) {
+			// heartbeat disabled: old behaviour (OK as soon as local port is open)
+			this.online = true
+			self.updateStatus(InstanceStatus.Ok, 'Listening (heartbeat disabled)')
+			return
+		}
+		this.heartbeatTimer = setInterval(() => {
+			const silence = Date.now() - this.lastSeen
+			if (silence > timeoutS * 1000) {
+				if (this.online || this.lastSeen === 0) {
+					self.log('warn', `No reply from OSCPoint at ${self.config.remotehost}:${self.config.remoteport}`)
+				}
+				this.online = false
+				this.lastSeen = this.lastSeen || Date.now() // avoid log spam before first contact
+				self.updateStatus(
+					InstanceStatus.ConnectionFailure,
+					`No response from OSCPoint at ${self.config.remotehost}:${self.config.remoteport}`
+				)
+			}
+			if (silence > PROBE_AFTER_SILENCE_MS) {
+				self.oscSend(self.config.remotehost, self.config.remoteport, `/oscpoint/feedbacks/refresh`, [])
+			}
+		}, 2500)
+	},
+	stopHeartbeat: function () {
+		if (this.heartbeatTimer) clearInterval(this.heartbeatTimer)
+		this.heartbeatTimer = null
 	},
 	mediaDuration: 0,
 	mediaPosition: 0,
@@ -20,14 +70,21 @@ const oscListener = {
 
 		this.udpPort.on('ready', () => {
 			self.log('info', `Listening for OSCPoint messages on port ${self.config.localport}`)
-			self.updateStatus(InstanceStatus.Ok, 'Connected.')
+			this.online = false
+			this.lastSeen = 0
+			self.updateStatus(InstanceStatus.Connecting, 'Waiting for OSCPoint to reply...')
 
 			//send a refresh request to OSCPoint
 			self.log('info', `Requesting feedback update using OSC /oscpoint/feedbacks/refresh`)
 			self.oscSend(self.config.remotehost, self.config.remoteport, `/oscpoint/feedbacks/refresh`, [])
+			this.startHeartbeat(self)
 		})
 
 		this.udpPort.on('message', (oscMsg) => {
+			if (typeof oscMsg.address === 'string' && oscMsg.address.startsWith('/oscpoint/')) {
+				this.markSeen(self)
+			}
+			if (!oscMsg.args || oscMsg.args.length === 0) return
 			this.processData(oscMsg, self)
 		})
 
