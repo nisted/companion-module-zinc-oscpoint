@@ -87,6 +87,13 @@ const configFields = [
 		See the <a href='https://github.com/phuvf/oscpoint/blob/main/CONFIGURATION.md'>configuration examples page on GitHub</a> for full details and example setups.`,
 		width: 12,
 	},
+	{
+		id: 'crew',
+		type: 'static-text',
+		label: "Psst. This one's got mates. 🍹",
+		value: `This tweaked OSCPoint module is part of a little crew of Companion modules: some brand new, some old favourites given a good tweak. Want to know who else is in the crew, or grab the freshest version of each one? It's all here: <a href="https://github.com/nisted/companion-modules" target="_blank">github.com/nisted/companion-modules</a>`,
+		width: 12,
+	},
 ]
 
 module.exports = configFields
