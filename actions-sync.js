@@ -71,7 +71,11 @@ module.exports = function (self, sendOscMessage) {
 			self.log('info', `Sync: starting slide show at slide ${tSlide}, build ${tBuild}`)
 			sendOscMessage('/oscpoint/slideshow/start', [{ type: 'i', value: tSlide }])
 			await sleep(toInt(opts.startDelay) ?? 1000)
-			await step('/oscpoint/next', tBuild, delay)
+			if (tBuild > 0 && opts.useHelper && self.helperOnline) {
+				self.helperSend('goto/build', [{ type: 'i', value: tBuild }])
+			} else {
+				await step('/oscpoint/next', tBuild, delay)
+			}
 			self.syncExpected = { slide: tSlide, build: tBuild, time: Date.now() }
 			return
 		}
@@ -83,7 +87,14 @@ module.exports = function (self, sendOscMessage) {
 		}
 
 		const cur = currentPosition()
-		if (cur.slide === tSlide) {
+		if (opts.useHelper && self.helperOnline) {
+			if (cur.slide === tSlide && cur.build === tBuild) return
+			self.log('debug', `Sync (helper): slide ${tSlide}, build ${tBuild}`)
+			self.helperSend('goto/slidebuild', [
+				{ type: 'i', value: tSlide },
+				{ type: 'i', value: tBuild },
+			])
+		} else if (cur.slide === tSlide) {
 			const diff = tBuild - cur.build
 			if (diff === 0) return
 			self.log('debug', `Sync: slide ${tSlide}, build ${cur.build} -> ${tBuild}`)
@@ -131,6 +142,12 @@ module.exports = function (self, sendOscMessage) {
 					label: 'Also mirror start / end / pause of the slide show',
 					id: 'mirrorStartStop',
 					default: true,
+				},
+				{
+					type: 'checkbox',
+					label: 'Use OSCPoint Helper to jump straight to the build (no flash-through)',
+					id: 'useHelper',
+					default: false,
 				},
 				{
 					type: 'number',

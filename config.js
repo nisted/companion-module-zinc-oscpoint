@@ -64,6 +64,22 @@ const configFields = [
 		width: 12,
 	},
 	{
+		type: 'number',
+		id: 'helperPort',
+		label: 'OSCPoint Helper port (0 = not used)',
+		width: 6,
+		min: 0,
+		max: 65535,
+		default: 35553,
+	},
+	{
+		id: 'helper-line',
+		type: 'static-text',
+		label: 'OSCPoint Helper',
+		value: `Optional Windows app on the PowerPoint machine (same IP as above) for custom shows, go-to-build, notes scroll/size and the VT timer overlay. Its feedback comes back on the local port above.<br/><br/>`,
+		width: 12,
+	},
+	{
 		id: 'important-line',
 		type: 'static-text',
 		label: 'Setting up multiple PowerPoint machines?',

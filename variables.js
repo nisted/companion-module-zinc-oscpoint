@@ -57,5 +57,9 @@ module.exports = async function (self) {
 		activeFolderFileName: {name: 'Name of selected file in active folder' },
 		activeFolderFileCount: {name: 'Number of files in active folder' },
 		activeFolderSelectedIndex: {name: 'Index of selected file in active folder' },
+		helperStatus: {name: 'OSCPoint Helper status (offline / no-powerpoint / powerpoint / slideshow)' },
+		helperVersion: {name: 'OSCPoint Helper version' },
+		customShows: {name: 'JSON array of custom slide show names (from OSCPoint Helper)' },
+		customShowCount: {name: 'Number of custom slide shows in the active presentation' },
 });
 }

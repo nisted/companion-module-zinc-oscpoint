@@ -55,6 +55,68 @@ const oscListener = {
 	stopHeartbeat: function () {
 		if (this.heartbeatTimer) clearInterval(this.heartbeatTimer)
 		this.heartbeatTimer = null
+		if (this.helperTimer) clearInterval(this.helperTimer)
+		this.helperTimer = null
+	},
+
+	// ---- OSCPoint Helper (separate app, own port, replies to our local port) ----
+	helperLastSeen: 0,
+	helperTimer: null,
+	startHelperPing: function (self) {
+		if (this.helperTimer) clearInterval(this.helperTimer)
+		this.helperTimer = null
+		self.helperOnline = false
+		const port = parseInt(self.config.helperPort ?? 35553)
+		if (isNaN(port) || port <= 0) {
+			self.setVariableValues({ helperStatus: 'not used' })
+			return
+		}
+		const ping = () => {
+			self.oscSend(self.config.remotehost, port, '/oscpoint/helper/ping', [])
+			if (self.helperOnline && Date.now() - this.helperLastSeen > 12000) {
+				self.helperOnline = false
+				self.log('warn', 'OSCPoint Helper stopped responding')
+				self.setVariableValues({ helperStatus: 'offline' })
+				self.checkFeedbacks('helperOnline')
+			}
+		}
+		ping()
+		this.helperTimer = setInterval(ping, 5000)
+	},
+	processHelper: function (oscMsg, self) {
+		this.helperLastSeen = Date.now()
+		if (!self.helperOnline) {
+			self.helperOnline = true
+			self.log('info', 'OSCPoint Helper is responding')
+			self.checkFeedbacks('helperOnline')
+		}
+		const what = oscMsg.address.substring('/oscpoint/helper/'.length)
+		const arg0 = oscMsg.args && oscMsg.args.length ? textHelper.extractText(oscMsg.args, self) : ''
+		switch (what) {
+			case 'pong':
+				self.setVariableValues({ helperVersion: arg0 })
+				break
+			case 'status':
+				self.setVariableValues({ helperStatus: arg0 })
+				break
+			case 'customshows': {
+				let list = []
+				try {
+					list = JSON.parse(arg0)
+				} catch (e) {
+					return self.log('error', `Helper: bad custom show list: ${e}`)
+				}
+				self.customShows = Array.isArray(list) ? list : []
+				self.setVariableValues({
+					customShows: JSON.stringify(self.customShows),
+					customShowCount: self.customShows.length,
+				})
+				self.updateActions() // refresh the custom show dropdown
+				break
+			}
+			default:
+				self.log('debug', `Helper: unhandled ${oscMsg.address}`)
+		}
 	},
 	mediaDuration: 0,
 	mediaPosition: 0,
@@ -78,9 +140,13 @@ const oscListener = {
 			self.log('info', `Requesting feedback update using OSC /oscpoint/feedbacks/refresh`)
 			self.oscSend(self.config.remotehost, self.config.remoteport, `/oscpoint/feedbacks/refresh`, [])
 			this.startHeartbeat(self)
+			this.startHelperPing(self)
 		})
 
 		this.udpPort.on('message', (oscMsg) => {
+			if (typeof oscMsg.address === 'string' && oscMsg.address.startsWith('/oscpoint/helper/')) {
+				return this.processHelper(oscMsg, self)
+			}
 			if (typeof oscMsg.address === 'string' && oscMsg.address.startsWith('/oscpoint/')) {
 				this.markSeen(self)
 			}

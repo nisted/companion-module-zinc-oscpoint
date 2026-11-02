@@ -44,7 +44,11 @@ const variableDefaults = {
     activeFolderFileName: "",
     activeFolderFileCount: 0,
     activeFolderSelectedIndex: 1,
-    activeFolderFileNames: "[]"
+    activeFolderFileNames: "[]",
+    helperStatus: "offline",
+    helperVersion: "",
+    customShows: "[]",
+    customShowCount: 0
 };
 
 module.exports = variableDefaults;

@@ -2,9 +2,10 @@ const filePresets = require('./presets/files.js')
 const mediaPresets = require('./presets/media.js')
 const slidesPresets = require('./presets/slides.js')
 const syncPresets = require('./presets/sync.js')
+const helperPresets = require('./presets/helper.js')
 
 module.exports = function (self) {
-	let presets = { ...filePresets, ...mediaPresets, ...slidesPresets, ...syncPresets }
+	let presets = { ...filePresets, ...mediaPresets, ...slidesPresets, ...syncPresets, ...helperPresets }
 	//let presets = { ...filePresets, ...mediaPresets }
 	const structure = [{
 		id: 'slides_section',
@@ -45,6 +46,31 @@ module.exports = function (self) {
 				description:
 					'Use on the BACKUP connection. "Main" = label of the connection to follow - edit to match yours. For automatic follow, add a trigger: event "On variable change" for $(Main:currentSlide), $(Main:buildPosition) and $(Main:state), action "Sync: follow another connection".',
 				presets: ['syncNow', 'syncStatus', 'openMatching', 'openAndSync'],
+			},
+		],
+	},
+	{
+		id: 'helper_section',
+		name: 'OSCPoint Helper',
+		definitions: [
+			{
+				id: 'helper_shows',
+				type: 'simple',
+				name: 'Custom shows & builds',
+				description: 'Needs the OSCPoint Helper app running on the PowerPoint machine. Pick the show in the button\'s action.',
+				presets: ['helperStatus', 'helperCustomShow', 'helperCustomShowRefresh', 'helperGotoBuild'],
+			},
+			{
+				id: 'helper_notes',
+				type: 'simple',
+				name: 'Presenter View notes',
+				presets: ['helperNotesUp', 'helperNotesDown', 'helperNotesTop', 'helperNotesRotary', 'helperFontLarger', 'helperFontSmaller', 'helperFontRotary'],
+			},
+			{
+				id: 'helper_overlay',
+				type: 'simple',
+				name: 'VT remaining-time overlay',
+				presets: ['helperOverlayToggle', 'helperOverlayBigger', 'helperOverlaySmaller', 'helperOverlaySetup'],
 			},
 		],
 	},

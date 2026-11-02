@@ -3,6 +3,14 @@ const { graphics } = require('companion-module-utils')
 
 module.exports = async function (self) {
 	self.setFeedbackDefinitions({
+		helperOnline: {
+			name: 'Helper: OSCPoint Helper is responding',
+			type: 'boolean',
+			label: 'Helper online',
+			defaultStyle: { bgcolor: combineRgb(0, 150, 0), color: combineRgb(255, 255, 255) },
+			options: [],
+			callback: () => !!self.helperOnline,
+		},
 		syncMismatch: {
 			name: 'Sync: out of step with source connection',
 			type: 'boolean',
