@@ -90,6 +90,8 @@ The OSCPoint Helper is a separate little Windows tray app that runs on the Power
 - Presenter View notes: scrolling and text size
 - a VT remaining-time overlay
 
+**Getting it:** grab `OSCPointHelper.exe` from the [OSCPoint Helper releases page](https://github.com/nisted/oscpoint-helper/releases) and run it on each PowerPoint machine. It's a single file, no installer, no fuss.
+
 #### Settings
 
 - **OSCPoint Helper port (0 = not used)**: default **35553**. The Helper lives at the same IP as the connection (the **Remote IP**), on this port. Set it to **0** if you're not using it, and Helper actions will be ignored (with a warning in the log).
