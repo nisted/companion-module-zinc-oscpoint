@@ -144,6 +144,18 @@ I ping the Helper every 5 seconds. If it goes quiet for 12 seconds after being o
 
 The Helper status and count presets use `$(OSCPoint:...)`, so edit the label if your connection is called something else.
 
+### Changing the connection from a button, a trigger or a variable
+
+Swapping between machines mid-show, or want a variable to say where PowerPoint lives? Any of the connection settings (**Remote IP**, **Remote port**, **Local port**, **Connection timeout** and **OSCPoint Helper port**) can be handed over to an action.
+
+1. On the connection page, tick **Can be set by the action** next to each field you want to hand over. That field then locks on the page and shows what the action last set.
+2. Add the **Connection: set settings** action. Its options are just the fields you ticked (nothing ticked yet? It'll tell you so). Fill in the ones to change (variables and expressions welcome); leave a field blank to leave it as is.
+3. To follow a variable, make a trigger on **variable changed** for that variable, with **Connection: set settings** as its action.
+
+When it runs, I write the new values into the connection and reconnect, same as when you save the connection page. If nothing's actually changed, I don't touch a thing. A number field given something that isn't a number is skipped, with a note in the log.
+
+Untick a field and it goes back to whatever you'd typed before you ticked it. No harm done.
+
 ### Psst. This one's got mates. 🍹
 
 This tweaked OSCPoint module is part of a little crew of Companion modules: some brand new, some old favourites given a good tweak. Want to know who else is in the crew, or grab the freshest version of each one? It's all here: [github.com/nisted/companion-modules](https://github.com/nisted/companion-modules)
