@@ -2,11 +2,13 @@
 
 const syncActions = require('./actions-sync')
 const helperActions = require('./actions-helper')
+const { setSettingsAction } = require('./connection-settings')
 
 module.exports = function (self) {
 	self.setActionDefinitions({
 		...syncActions(self, (path, args) => sendOscMessage(path, args)),
 		...helperActions(self),
+		...setSettingsAction(self),
 		next: {
 			name: 'Next',
 			options: [],
@@ -152,11 +154,8 @@ module.exports = function (self) {
 				{
 					id: 'sectionName',
 					type: 'textinput',
-					label: 'Section name (case sensitive)',
+					label: 'Section name (case sensitive) - used when Start from = Named section',
 					default: 'Default Section',
-					isVisibleExpression: (options) => {
-						return options.startPosition == 'section'
-					},
 					useVariables: true,
 				},
 				{
@@ -166,10 +165,7 @@ module.exports = function (self) {
 					clampValues: true,
 					min: 1,
 					default: 1,
-					label: 'Slide number',
-					isVisibleExpression: (options) => {
-						return options.startPosition == 'slideNumber'
-					},
+					label: 'Slide number - used when Start from = Slide number',
 					useVariables: true,
 				},
 			],
@@ -417,7 +413,7 @@ module.exports = function (self) {
 					default: 'start',
 				},
 				{
-					label: 'Milliseconds',
+					label: 'Milliseconds - used unless Reference = %age',
 					id: 'posMs',
 					type: 'number',
 					asInteger: true,
@@ -425,13 +421,10 @@ module.exports = function (self) {
 					min: 1,
 					default: 1000,
 					useVariables: true,
-					isVisibleExpression: (options) => {
-						return options.type != 'percent'
-					},
 				},
 				{
 					type: 'textinput',
-					label: 'Percent',
+					label: 'Percent - used when Reference = %age',
 					id: 'posPercent',
 					type: 'number',
 					clampValues: true,
@@ -439,9 +432,6 @@ module.exports = function (self) {
 					max: 100,
 					default: 50,
 					useVariables: true,
-					isVisibleExpression: (options) => {
-						return options.type == 'percent'
-					},
 				},
 			],
 			callback: async (event) => {
@@ -524,11 +514,8 @@ module.exports = function (self) {
 				},
 				{
 					type: 'static-text',
-					label: 'WARNING! OSCPoint will only respond to the Enable Actions command - all others will  be ignored.',
+					label: 'If disabling: WARNING! OSCPoint will only respond to the Enable Actions command - all others will  be ignored.',
 					value: '',
-					isVisibleExpression: (options) => {
-						return options.action == 'disable'
-					},
 				},
 			],
 			callback: async (event) => {

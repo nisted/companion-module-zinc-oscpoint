@@ -7,6 +7,7 @@ const UpdatePresetDefinitions = require('./presets')
 const oscListener = require('./osc-listener')
 const configFields = require('./config')
 const variableDefaults = require('./variable-defaults')
+const connectionSettings = require('./connection-settings')
 
 module.exports = class ModuleInstance extends InstanceBase {
 	constructor(internal) {
@@ -14,7 +15,9 @@ module.exports = class ModuleInstance extends InstanceBase {
 	}
 
 	async init(config) {
-		this.config = config
+		const r = connectionSettings.reconcile(this, undefined, config)
+		this.config = r.config
+		if (r.dirty) this.saveConfig(this.config)
 		this.files = []
 		this.fileIndex = 0
 		this.fileCount = 0
@@ -45,8 +48,21 @@ module.exports = class ModuleInstance extends InstanceBase {
 	}
 
 	async configUpdated(config) {
+		const r = connectionSettings.reconcile(this, this.config, config)
+		if (r.dirty) this.saveConfig(r.config) // unticked field restored / snapshot kept
+		await this.applyConfig(r.config, false)
+	}
+
+	// Used by configUpdated and by the "Connection: set settings" action
+	async applyConfig(config, fromAction) {
+		const old = this.config || {}
 		this.config = config
-		this.log('info', 'Config has changed, updating...')
+		this.updateActions() // the set-settings action only shows ticked settings
+
+		const keys = ['remotehost', 'remoteport', 'localport', 'heartbeatTimeout', 'helperPort']
+		if (keys.every((k) => String(old[k]) === String(config[k]))) return // nothing that needs a reconnect
+
+		this.log('info', `${fromAction ? 'Settings set by action' : 'Config has changed'}, reconnecting...`)
 		this.log('info', `Now sending OSC actions to ${this.config.remotehost}:${this.config.remoteport}`)
 		this.updateStatus(InstanceStatus.Connecting, 'Reconnecting...')
 
