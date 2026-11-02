@@ -4,8 +4,8 @@ const configFields = [
 	{
 		id: 'important-line',
 		type: 'static-text',
-		label: 'OSCPoint provides an OSC API to control and monitor PowerPoint on Windows devices.',
-		value: `There's a free PowerPoint add-in you'll need to download and install on your PowerPoint machines: <a href='https://oscpoint.com/donate' target="_blank">https://oscpoint.com/</a>`,
+		label: 'OSCPoint lets you drive and keep an eye on PowerPoint on Windows, all over OSC.',
+		value: `First things first: each PowerPoint machine needs the free OSCPoint add-in installed. Grab it here: <a href='https://oscpoint.com/donate' target="_blank">https://oscpoint.com/</a>`,
 		width: 12,
 	},
 
@@ -28,8 +28,8 @@ const configFields = [
 	{
 		id: 'important-line',
 		type: 'static-text',
-		label: 'The IP address and port of your remote PowerPoint machine.',
-		value: `Default remote port is <b>35551</b> - this can be changed using the OSCPoint ribbon tab in PowerPoint.<br/><br/>`,
+		label: 'Where the PowerPoint machine lives on the network. Its IP address and port, basically.',
+		value: `The remote port is <b>35551</b> out of the box. Want a different one? Change it on the OSCPoint ribbon tab in PowerPoint.<br/><br/>`,
 		width: 12,
 	},
 	{
@@ -43,8 +43,8 @@ const configFields = [
 	{
 		id: 'important-line',
 		type: 'static-text',
-		label: 'This is the port that this module will use to listen for OSC feedback messages from OSCPoint',
-		value: `Default local port is <b>35550</b> - this can be changed using the OSCPoint ribbon tab in PowerPoint.<br/><br/>`,
+		label: 'The port I listen on for OSC feedback coming back from OSCPoint.',
+		value: `The local port is <b>35550</b> out of the box. You can change it on the OSCPoint ribbon tab in PowerPoint too.<br/><br/>`,
 		width: 12,
 	},
 	{
@@ -60,7 +60,7 @@ const configFields = [
 		id: 'heartbeat-line',
 		type: 'static-text',
 		label: 'Connection check',
-		value: `Status only shows OK once OSCPoint actually replies. If nothing is heard for this long, the connection shows as failed. Requires OSC feedbacks to be enabled in OSCPoint.<br/><br/>`,
+		value: `No fibbing here: status only goes OK once OSCPoint actually replies. If I hear nothing for this long, the connection shows as failed. You'll need OSC feedbacks switched on in OSCPoint for this to work.<br/><br/>`,
 		width: 12,
 	},
 	{
@@ -76,15 +76,15 @@ const configFields = [
 		id: 'helper-line',
 		type: 'static-text',
 		label: 'OSCPoint Helper',
-		value: `Optional Windows app on the PowerPoint machine (same IP as above) for custom shows, go-to-build, notes scroll/size and the VT timer overlay. Its feedback comes back on the local port above.<br/><br/>`,
+		value: `An optional extra: a little Windows app that sits on the PowerPoint machine (same IP as above). It adds custom shows, go-to-build, notes scroll/size and the VT timer overlay. Its feedback comes back on the local port above.<br/><br/>`,
 		width: 12,
 	},
 	{
 		id: 'important-line',
 		type: 'static-text',
-		label: 'Setting up multiple PowerPoint machines?',
-		value: `Each machine will need it's own instance of OSCPoint, and you'll need to tweak the local port below to get feedback from both machines.<br/>
-		See the <a href='https://github.com/phuvf/oscpoint/blob/main/CONFIGURATION.md'>configuration examples page on GitHub</a> for full details and example setups.`,
+		label: 'Running more than one PowerPoint machine?',
+		value: `Main and backup, say? Each machine needs its own instance of OSCPoint, and you'll need to tweak the local port above so you get feedback from both.<br/>
+		The <a href='https://github.com/phuvf/oscpoint/blob/main/CONFIGURATION.md'>configuration examples page on GitHub</a> has the full details and some example setups.`,
 		width: 12,
 	},
 	{

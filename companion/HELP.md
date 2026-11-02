@@ -1,8 +1,8 @@
-## OSCPoint - an OSC API for PowerPoint
+## OSCPoint: PowerPoint, but you drive it over OSC
 
-OSCPoint is a PowerPoint add-in that allows Open Sound Control (OSC) control of PowerPoint on Windows.
+OSCPoint is a PowerPoint add-in that lets you control PowerPoint on Windows using Open Sound Control (OSC).
 
-There's a free PowerPoint add-in you'll need to download and install on your show machines - follow the link below for more details:
+You'll need the free add-in downloaded and installed on each of your show machines. Everything you need is at the link below:
 
 https://github.com/phuvf/oscpoint
 
