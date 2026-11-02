@@ -2,11 +2,13 @@
 
 const syncActions = require('./actions-sync')
 const helperActions = require('./actions-helper')
+const connectionActions = require('./actions-connection')
 
 module.exports = function (self) {
 	self.setActionDefinitions({
 		...syncActions(self, (path, args) => sendOscMessage(path, args)),
 		...helperActions(self),
+		...connectionActions(self),
 		next: {
 			name: 'Next',
 			options: [],
