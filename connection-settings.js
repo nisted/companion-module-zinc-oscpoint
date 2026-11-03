@@ -26,10 +26,34 @@ const tickboxField = (id) => ({
 	id: tickId(id),
 	label: 'Can be set by the action',
 	tooltip:
-		'Tick to let the "Connection: set settings" action change this setting (e.g. from a variable or expression). Unticking puts it back to the value it had when you ticked it.',
+		"Hands this setting over to the 'Connection: set settings' action, so a button or trigger can change it (from a variable, say). While ticked, it's locked here and shows what the action last set. Untick it to get back what it was when you ticked it.",
 	width: 4,
 	default: false,
+	// the field's visibility depends on this tick, and a tickbox can't follow a variable anyway
+	disableAutoExpression: true,
 })
+
+const shownValue = (config, id) => {
+	const v = String(config?.[id] ?? '').trim()
+	if (v === '') return 'blank'
+	if (id === 'heartbeatTimeout' && Number(v) === 0) return '0 (off)'
+	if (id === 'helperPort' && Number(v) === 0) return '0 (not used)'
+	return v
+}
+
+/** A connection field + its locked view (shown while ticked) + its tickbox */
+const lockable = (config, field) => [
+	{ ...field, isVisibleExpression: `!$(options:${tickId(field.id)})` },
+	{
+		type: 'static-text',
+		id: `${field.id}_locked`,
+		label: field.label,
+		width: field.width,
+		value: `Set by the 'Connection: set settings' action: <b>${shownValue(config, field.id)}</b>`,
+		isVisibleExpression: `$(options:${tickId(field.id)})`,
+	},
+	tickboxField(field.id),
+]
 
 /**
  * Apply tick/untick rules to an incoming config.
@@ -125,4 +149,4 @@ function setSettingsAction(self) {
 	}
 }
 
-module.exports = { SETTABLE, SNAP_KEY, tickId, tickboxField, reconcile, setSettingsAction }
+module.exports = { SETTABLE, SNAP_KEY, tickId, tickboxField, lockable, reconcile, setSettingsAction }

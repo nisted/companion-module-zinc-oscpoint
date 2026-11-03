@@ -5,7 +5,7 @@ const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
 const UpdatePresetDefinitions = require('./presets')
 const oscListener = require('./osc-listener')
-const configFields = require('./config')
+const fieldsFor = require('./config')
 const variableDefaults = require('./variable-defaults')
 const connectionSettings = require('./connection-settings')
 
@@ -72,7 +72,7 @@ module.exports = class ModuleInstance extends InstanceBase {
 
 	// Return config fields for web config
 	getConfigFields() {
-		return configFields
+		return fieldsFor(this.config)
 	}
 
 	updateActions() {

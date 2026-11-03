@@ -1,7 +1,7 @@
 const { Regex } = require('@companion-module/base')
-const { tickboxField } = require('./connection-settings')
+const { lockable } = require('./connection-settings')
 
-const configFields = [
+const fieldsFor = (config) => [
 	{
 		id: 'important-line',
 		type: 'static-text',
@@ -17,7 +17,7 @@ const configFields = [
 		width: 12,
 	},
 
-	{
+	...lockable(config, {
 		type: 'textinput',
 		id: 'remotehost',
 		label: 'Remote IP',
@@ -25,9 +25,8 @@ const configFields = [
 		width: 8,
 		regex: Regex.IP,
 		default: '127.0.0.1',
-	},
-	tickboxField('remotehost'),
-	{
+	}),
+	...lockable(config, {
 		type: 'textinput',
 		id: 'remoteport',
 		label: 'Remote port (default 35551)',
@@ -35,8 +34,7 @@ const configFields = [
 		width: 8,
 		regex: Regex.PORT,
 		default: 35551,
-	},
-	tickboxField('remoteport'),
+	}),
 	{
 		id: 'important-line-2',
 		type: 'static-text',
@@ -44,7 +42,7 @@ const configFields = [
 		value: `The remote port is <b>35551</b> out of the box. Want a different one? Change it on the OSCPoint ribbon tab in PowerPoint.<br/><br/>`,
 		width: 12,
 	},
-	{
+	...lockable(config, {
 		type: 'textinput',
 		id: 'localport',
 		label: 'Local port (default 35550)',
@@ -53,8 +51,7 @@ const configFields = [
 		width: 8,
 		regex: Regex.PORT,
 		default: 35550,
-	},
-	tickboxField('localport'),
+	}),
 	{
 		id: 'important-line-3',
 		type: 'static-text',
@@ -62,7 +59,7 @@ const configFields = [
 		value: `The local port is <b>35550</b> out of the box. You can change it on the OSCPoint ribbon tab in PowerPoint too.<br/><br/>`,
 		width: 12,
 	},
-	{
+	...lockable(config, {
 		type: 'number',
 		id: 'heartbeatTimeout',
 		label: 'Connection timeout, seconds (0 = off, default 10)',
@@ -72,8 +69,7 @@ const configFields = [
 		min: 0,
 		max: 120,
 		default: 10,
-	},
-	tickboxField('heartbeatTimeout'),
+	}),
 	{
 		id: 'heartbeat-line',
 		type: 'static-text',
@@ -81,7 +77,7 @@ const configFields = [
 		value: `No fibbing here: status only goes OK once OSCPoint actually replies. If I hear nothing for this long, the connection shows as failed. You'll need OSC feedbacks switched on in OSCPoint for this to work.<br/><br/>`,
 		width: 12,
 	},
-	{
+	...lockable(config, {
 		type: 'number',
 		id: 'helperPort',
 		label: 'OSCPoint Helper port (0 = not used, default 35553)',
@@ -91,8 +87,7 @@ const configFields = [
 		min: 0,
 		max: 65535,
 		default: 35553,
-	},
-	tickboxField('helperPort'),
+	}),
 	{
 		id: 'helper-line',
 		type: 'static-text',
@@ -117,4 +112,4 @@ const configFields = [
 	},
 ]
 
-module.exports = configFields
+module.exports = fieldsFor
