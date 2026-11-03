@@ -5,7 +5,7 @@ const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
 const UpdatePresetDefinitions = require('./presets')
 const oscListener = require('./osc-listener')
-const { fieldsFor, CONN_FIELDS, CONN_LABELS, NUMBER_FIELDS, NUMBER_TYPE_FIELDS, isTicked } = require('./config')
+const { fieldsFor, CONN_FIELDS, CONN_LABELS, NUMBER_FIELDS, NUMBER_RANGES, NUMBER_TYPE_FIELDS, isTicked } = require('./config')
 const variableDefaults = require('./variable-defaults')
 
 module.exports = class ModuleInstance extends InstanceBase {
@@ -120,9 +120,16 @@ module.exports = class ModuleInstance extends InstanceBase {
 				)
 				continue
 			}
-			if (NUMBER_FIELDS.has(f) && Number.isNaN(Number(v))) {
-				this.log('warn', `Connection: set settings: "${CONN_LABELS[f]}" needs a number, and "${v}" isn't one. Left it as it was.`)
-				continue
+			if (NUMBER_FIELDS.has(f)) {
+				const n = Number(v)
+				const [lo, hi] = NUMBER_RANGES[f]
+				if (!Number.isInteger(n) || n < lo || n > hi) {
+					this.log(
+						'warn',
+						`Connection: set settings: "${CONN_LABELS[f]}" needs a whole number from ${lo} to ${hi}, and "${v}" isn't one. Left it as it was.`,
+					)
+					continue
+				}
 			}
 			// number boxes on the connection page hold numbers; the rest are text
 			const value = NUMBER_TYPE_FIELDS.has(f) ? Number(v) : v

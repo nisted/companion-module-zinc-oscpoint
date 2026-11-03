@@ -1,7 +1,7 @@
 // 'Connection: set settings': lets a button or a trigger change the connection fields
 // ticked "Can be set by the action" on the connection page.
 
-const { CONN_FIELDS, CONN_LABELS, NUMBER_FIELDS, isTicked } = require('./config')
+const { CONN_FIELDS, CONN_LABELS, NUMBER_FIELDS, NUMBER_RANGES, isTicked } = require('./config')
 
 module.exports = function (self) {
 	const ticked = CONN_FIELDS.filter((f) => isTicked(self.config, f))
@@ -17,7 +17,9 @@ module.exports = function (self) {
 						label: CONN_LABELS[f],
 						default: '',
 						useVariables: true,
-						tooltip: NUMBER_FIELDS.has(f) ? 'A number. Blank = leave as is.' : 'Blank = leave as is.',
+						tooltip: NUMBER_FIELDS.has(f)
+							? `A whole number from ${NUMBER_RANGES[f][0]} to ${NUMBER_RANGES[f][1]}. Blank = leave as is.`
+							: 'Blank = leave as is.',
 					}))
 				: [
 						{

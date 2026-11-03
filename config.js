@@ -6,6 +6,14 @@ const CONN_FIELDS = ['remotehost', 'remoteport', 'localport', 'heartbeatTimeout'
 /** The connection fields that hold a number */
 const NUMBER_FIELDS = new Set(['remoteport', 'localport', 'heartbeatTimeout', 'helperPort'])
 
+/** Allowed whole-number range for each number field: real ports are 1-65535; 0 = off where the page allows it */
+const NUMBER_RANGES = {
+	remoteport: [1, 65535],
+	localport: [1, 65535],
+	heartbeatTimeout: [0, 120],
+	helperPort: [0, 65535],
+}
+
 /** The connection fields that are number boxes on the connection page (the others are text boxes) */
 const NUMBER_TYPE_FIELDS = new Set(['heartbeatTimeout', 'helperPort'])
 
@@ -156,4 +164,4 @@ const CONN_LABELS = Object.fromEntries(
 		.map((f) => [f.id, f.label]),
 )
 
-module.exports = { fieldsFor, CONN_FIELDS, CONN_LABELS, NUMBER_FIELDS, NUMBER_TYPE_FIELDS, isTicked }
+module.exports = { fieldsFor, CONN_FIELDS, CONN_LABELS, NUMBER_FIELDS, NUMBER_RANGES, NUMBER_TYPE_FIELDS, isTicked }
